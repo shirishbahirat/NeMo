@@ -116,7 +116,19 @@ tw_lptype model_lps[] = {
 		{       0}};
 
 
+/** Stats gathering */
+st_trace_type nemo_trace_types[] = {
+             { 0 },
+             { 0 },
+             {
+                          (rbev_trace_f) NULL,
+                          0,
+                          (ev_trace_f) TN_neuron_event_trace,
+                          sizeof(id_type)
+                     },
+             { 0 }
 
+};
 
 /**
  * @brief      Displays NeMo's initial run size configuration.
@@ -225,7 +237,8 @@ void init_nemo() {
 	g_tw_lookahead = 0.001;
 	g_tw_lp_types = model_lps;
 	g_tw_lp_typemap = lpTypeMapper;
-
+	// Viz settings:
+	g_st_trace_types = nemo_trace_types;
 	/// EVENTS PER PE SETTING
 	g_tw_events_per_pe = NEURONS_IN_CORE * AXONS_IN_CORE; // magic number
 
@@ -243,36 +256,13 @@ void init_nemo() {
  */
 
 int main(int argc, char *argv[]) {
-//	char *NETWORK_FILE_NAME = calloc(256, sizeof(char));
-//	strcpy(NETWORK_FILE_NAME, "nemo_model.csv");
-//	char *SPIKE_FILE_NAME = calloc(256, sizeof(char));
-//	strcpy(SPIKE_FILE_NAME, "nemo_spike.csv");
+
 	tw_opt_add(app_opt);
 	tw_init(&argc, &argv);
 
 	// call nemo init
 	init_nemo();
-	if (nonC11 == 1)
-		printf("Non C11 compliant compiler detected.\n");
 
-	//    if (testingMode == 1 ) {
-	//        unsigned char mapResult = 0;
-	//        mapResult = mapResult | mapTests();
-	//
-	//        if(mapResult & INVALID_AXON){
-	//            printf("Creted invalid axon.\n");
-	//            }
-	//        if (mapResult & INVALID_SYNAPSE){
-	//            printf("Created invalid synapse.\n");
-	//        }
-	//        if (mapResult & INVALID_NEURON){
-	//            printf("Created invalid neuron.\n");
-	//        }
-	//
-	//
-	//        return mapResult;
-	//    }
-	// Define LPs:
 	tw_define_lps(LPS_PER_PE, sizeof(messageData));
 	tw_lp_setup_types();
 

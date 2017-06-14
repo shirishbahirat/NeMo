@@ -63,145 +63,148 @@ float: atof
  *Global Macros */
 /**@{ */
 
+
+///////////////////////////////////////////////////////////////////////////////
+/* C11 _Generic macros - Removed for the sake of compiler sanity.
 #define GET_VNAME(Variable) (#Variable)
+//#ifdef NET_IO_DEBUG
 
-///////FILE DEBUG HELPERS /////////
-#ifdef NET_IO_DEBUG
-
-#define genWrite(x) _Generic((0,x), \
-char: "%i,", \
-signed char: "%hhd,", \
-unsigned char: "%hhu,", \
-signed short: "%hd,", \
-unsigned short: "%hu,", \
-signed int: "%d,", \
-unsigned int: "%u,", \
-long int: "%ld,", \
-unsigned long int: "%lu,", \
-long long int: "%lld,", \
-unsigned long long int: "%llu,", \
-float: "%f,", \
-double: "%f,", \
-long double: "%Lf,", \
-char *: "%s,", \
-bool: "%i,",\
-void *: "%p,")
-
-
-#define _GET_NTH_ARG(_1, _2, _3, _4, _5, N, ...) N
-#define COUNT_VARARGS(...) _GET_NTH_ARG("ignored", ##__VA_ARGS__, 4, 3, 2, 1, 0)
-
-#define MCR(i) fprintf(neuronConfigFile, genWrite(i), i);
-
+//#define genWrite(x) _Generic((0,x), \
+//char: "%i,", \
+//signed char: "%hhd,", \
+//unsigned char: "%hhu,", \
+//signed short: "%hd,", \
+//unsigned short: "%hu,", \
+//signed int: "%d,", \
+//unsigned int: "%u,", \
+//long int: "%ld,", \
+//unsigned long int: "%lu,", \
+//long long int: "%lld,", \
+//unsigned long long int: "%llu,", \
+//float: "%f,", \
+//double: "%f,", \
+//long double: "%Lf,", \
+//char *: "%s,", \
+//bool: "%i,",\
+//void *: "%p,")
+//
+//
+//#define _GET_NTH_ARG(_1, _2, _3, _4, _5, N, ...) N
+//#define COUNT_VARARGS(...) _GET_NTH_ARG("ignored", ##__VA_ARGS__, 4, 3, 2, 1, 0)
+//
+//#define MCR(i) fprintf(neuronConfigFile, genWrite(i), i);
+//
+////#define _tp0(...)
+////#define _tp1(i)		genWrite(i)
+////#define _tp2(i,...) genWrite(i) _tp1(__VA_ARGS__)
+////#define _tp3(i,...) genWrite(i) _tp2(__VA_AGRS__)
+////#define _tp4(i,...) genWrite(i) _tp3(__VA_ARGS__)
+//
 //#define _tp0(...)
-//#define _tp1(i)		genWrite(i)
-//#define _tp2(i,...) genWrite(i) _tp1(__VA_ARGS__)
-//#define _tp3(i,...) genWrite(i) _tp2(__VA_AGRS__)
-//#define _tp4(i,...) genWrite(i) _tp3(__VA_ARGS__)
-
-#define _tp0(...)
-#define _tp1(i)		MCR(i)
-#define _tp2(i,...) MCR(i) _tp1(__VA_ARGS__)
-#define _tp3(i,...) MCR(i) _tp2(__VA_ARGS__)
-#define _tp4(i,...) MCR(i) _tp3(__VA_ARGS__)
-
-#define MCRN(...)  \
-_GET_NTH_ARG("ignored", ##__VA_ARGS__, \
-_tp4, _tp3, _tp2, _tp1,_tp0)(__VA_ARGS__)
-
-
-
-
-#endif
-
-
-#if (__STDC_VERSION >= 200112L) || (_POSIX_C_SOURCE >= 20112L) || (BGQ <=0 )
-#define printf_dec_format(x) _Generic((0,x), \
-char: "%c", \
-signed char: "%hhd", \
-unsigned char: "%hhu", \
-signed short: "%hd", \
-unsigned short: "%hu", \
-signed int: "%d", \
-unsigned int: "%u", \
-long int: "%ld", \
-unsigned long int: "%lu", \
-long long int: "%lld", \
-unsigned long long int: "%llu", \
-float: "%f", \
-double: "%f", \
-long double: "%Lf", \
-char *: "%s", \
-void *: "%p")
-
-
-#define print(x) printf(printf_dec_format(x), x)
-#define sprint(str, y) sprintf(str, printf_dec_format(y), y)
-#define debugMsg(type, value) print(type); print(value); printf("\n")
-#define oprint(message, item) print(message); printf(":"); print(item); printf("\n");
-#define fprint(file, z) fprintf(file, printf_dec_format(z),z);
-#define UN(i) fprintf(neuronConfigFile, printf_dec_format(i), i);
-#define nonC11 0
-#elif BGQ
-//#else //stupid BGQ
-
-#define charf    "%c"   
-#define scharf   "%hhd"   
-#define sshortf  "%hd"   
-#define ushortf  "%hu"   
-#define intf     "%d"   
-#define uintf    "%u"   
-#define lintf    "%ld"   
-#define ulintf   "%lu"   
-#define llintf   "%lld"   
-#define ullintf  "%llu"   
-#define floatf   "%f"   
-#define dobulef  "%f"   
-#define ldoublef "%Lf"   
-
-#define voidf    "%p"   
-#define charsf "%s\n"
-
-#define printf_dec_format(x) _Generic((x), \
-char:                   charf, \
-signed char:            scharf, \
-signed short:           sshortf, \
-unsigned short:         ushortf ,\
-signed int:             intf    ,\
-unsigned int:           uintf   ,\
-long int:               lintf   ,\
-unsigned long int:      ulintf  ,\
-long long int:          llintf  ,\
-unsigned long long int: ullintf ,\
-float:                  floatf  ,\
-double:                 dobulef ,\
-long double:            ldoublef,\
-char *:                 charsf  ,\
-void *:                 voidf   )
-
-#define print(x) printf(printf_dec_format(x), x)
-#define sprint(str, y) sprintf(str, printf_dec_format(y), y)
-#define debugMsg(type, value) print(type); print(value); printf("\n")
-#define fprint(file, z) fprintf(file, printf_dec_format(z),z)
-#define nonC11 1
-/*
-#else
-
-#define print(x) printf("%lld", x)
-
-#define debugMsg(type, value) printf("%s -> %lld",type,value)
-#define sprint(str, y) sprintf(str, print(y), y)
-#define fprint(file, z) fprintf(file, print(z),z)
-
-#define nonC11 1 */
-
-#endif
-
+//#define _tp1(i)		MCR(i)
+//#define _tp2(i,...) MCR(i) _tp1(__VA_ARGS__)
+//#define _tp3(i,...) MCR(i) _tp2(__VA_ARGS__)
+//#define _tp4(i,...) MCR(i) _tp3(__VA_ARGS__)
+//
+//#define MCRN(...)  \
+//_GET_NTH_ARG("ignored", ##__VA_ARGS__, \
+//_tp4, _tp3, _tp2, _tp1,_tp0)(__VA_ARGS__)
+//
+//
+//
+//
+//#endif
+//
+//
+//#if (__STDC_VERSION >= 200112L) || (_POSIX_C_SOURCE >= 20112L) || (BGQ <=0 )
+//#define printf_dec_format(x) _Generic((0,x), \
+//char: "%c", \
+//signed char: "%hhd", \
+//unsigned char: "%hhu", \
+//signed short: "%hd", \
+//unsigned short: "%hu", \
+//signed int: "%d", \
+//unsigned int: "%u", \
+//long int: "%ld", \
+//unsigned long int: "%lu", \
+//long long int: "%lld", \
+//unsigned long long int: "%llu", \
+//float: "%f", \
+//double: "%f", \
+//long double: "%Lf", \
+//char *: "%s", \
+//void *: "%p")
+//
+//
+//#define print(x) printf(printf_dec_format(x), x)
+//#define sprint(str, y) sprintf(str, printf_dec_format(y), y)
+//#define debugMsg(type, value) print(type); print(value); printf("\n")
+//#define oprint(message, item) print(message); printf(":"); print(item); printf("\n");
+//#define fprint(file, z) fprintf(file, printf_dec_format(z),z);
+//#define UN(i) fprintf(neuronConfigFile, printf_dec_format(i), i);
+//#define nonC11 0
+//#elif BGQ
+////#else //stupid BGQ
+//
+//#define charf    "%c"
+//#define scharf   "%hhd"
+//#define sshortf  "%hd"
+//#define ushortf  "%hu"
+//#define intf     "%d"
+//#define uintf    "%u"
+//#define lintf    "%ld"
+//#define ulintf   "%lu"
+//#define llintf   "%lld"
+//#define ullintf  "%llu"
+//#define floatf   "%f"
+//#define dobulef  "%f"
+//#define ldoublef "%Lf"
+//
+//#define voidf    "%p"
+//#define charsf "%s\n"
+//
+//#define printf_dec_format(x) _Generic((x), \
+//char:                   charf, \
+//signed char:            scharf, \
+//signed short:           sshortf, \
+//unsigned short:         ushortf ,\
+//signed int:             intf    ,\
+//unsigned int:           uintf   ,\
+//long int:               lintf   ,\
+//unsigned long int:      ulintf  ,\
+//long long int:          llintf  ,\
+//unsigned long long int: ullintf ,\
+//float:                  floatf  ,\
+//double:                 dobulef ,\
+//long double:            ldoublef,\
+//char *:                 charsf  ,\
+//void *:                 voidf   )
+//
+//#define print(x) printf(printf_dec_format(x), x)
+//#define sprint(str, y) sprintf(str, printf_dec_format(y), y)
+//#define debugMsg(type, value) print(type); print(value); printf("\n")
+//#define fprint(file, z) fprintf(file, printf_dec_format(z),z)
+//#define nonC11 1
+///
+//#else
+//
+//#define print(x) printf("%lld", x)
+//
+//#define debugMsg(type, value) printf("%s -> %lld",type,value)
+//#define sprint(str, y) sprintf(str, print(y), y)
+//#define fprint(file, z) fprintf(file, print(z),z)
+//
+//#define nonC11 1
+//
+//#endif */
+///////////////END OF C11 MACROS. REMOVED FOR COMPILING SANITY ////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 
 /** TODO: Eventually replace this with generic macro and non-branching ABS code. */
 #define IABS(a) (((a) < 0) ? (-a) : (a)) //!< Typeless integer absolute value function
-/** TODO: See if there is a non-branching version of the signum function, maybe in MAth libs and use that. */
+/** TODO: See if there is a non-branching version of the signum function, maybe in
+ * MAth libs and use that. */
 #define SGN(x) ((x > 0) - (x < 0)) //!< Signum function
 
 #define DT(x) !(x) //!<Kronecker Delta function.

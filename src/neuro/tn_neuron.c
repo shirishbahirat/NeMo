@@ -1160,8 +1160,9 @@ void TN_commit(tn_neuron_state* s, tw_bf* cv, messageData* m, tw_lp* lp) {
 /** @todo: fix this remote value */
 void prhdr(bool* display, char* hdr) {
   if (&display) {
-    print(hdr);
-    *display = true;
+    //print(hdr);
+      printf("%s\n",hdr);
+      *display = true;
   }
 }
 
@@ -1182,15 +1183,18 @@ void TN_final(tn_neuron_state *s, tw_lp *lp) {
     sprintf(em, "%s\n Core: %i Local: %i \n", hdr, s->myCoreID, s->myLocalID);
     if (s->membranePotential != 0) {
       prhdr(&dsp, em);
-      debugMsg(alpha, s->membranePotential);
+        printf("%s%i\n",alpha,s->membranePotential);
+      //debugMsg(alpha, s->membranePotential);
     }
     if (s->SOPSCount != 0) {
       prhdr(&dsp, em);
-      debugMsg(sops, s->SOPSCount);
+        printf("%s%i\n",sops, s->SOPSCount );
+        //debugMsg(sops, s->SOPSCount);
     }
     if (s->heartbeatOut != false) {
       prhdr(&dsp, em);
-      debugMsg(HB, (int)s->heartbeatOut);
+        printf("%s%i\n",HB, (int)s->heartbeatOut );
+      //debugMsg(HB, (int)s->heartbeatOut);
     }
   }
     if(SAVE_NETWORK_STRUCTURE){
@@ -1198,12 +1202,24 @@ void TN_final(tn_neuron_state *s, tw_lp *lp) {
     }
 }
 
+/** TN_neuron_event_trace - Function that handles event traces for
+ * data collection and instrumentation.
+ *
+
+ */
+void TN_neuron_event_trace(messageData *m, tw_lp *lp, char *buffer, int *collect_flag)
+{
+    id_type sender = (id_type) m->localID;
+    memcpy(buffer, &sender, sizeof(id_type));
+}
+
 inline tn_neuron_state* TN_convert(void* lpstate) {
   return (tn_neuron_state*)lpstate;
 }
 
 /**@}*/
-/** RIO Functions for neuron config  @{ **/
+/** RIO Functions for neuron config
+ * @TODO: cruft removal would be good here. @{ **/
 size_t tn_size(tn_neuron_state *s, tw_lp *lp){
   size_t neuronSize = sizeof(tn_neuron_state);
   return neuronSize;
@@ -1223,103 +1239,6 @@ void tn_deserialize(tn_neuron_state *s, void *buffer, tw_lp *lp) {
 int tddbFileOpen = 0;
 
 
-
-//
-//void testCreateTNNeuronFromFile(tn_neuron_state *s, tw_lp *lp){
-//
-//	if (!tddbFileOpen){
-//		sprintf(configFileName, "%s_%li.csv", BBFN, g_tw_mynode);
-//		neuronConfigFile = fopen(configFileName, "w");
-//		tddbFileOpen =1;
-//		fprintf(neuronConfigFile, "type,isOutput,coreID,localID,"
-//				"sigma0,sigma1,sigma2,sigma3,"
-//				"s0,s1,s2,s3,"
-//				"b0,b1,b2,b3,"
-//				"sigma_lambda,"
-//				"lambda,"
-//				"c_lambda,"
-//				"epsilon,"
-//				"alpha,"
-//				"beta,"
-//				"TM,"
-//				"gamma,"
-//				"kappa,"
-//				"sigma_VR,"
-//				"VR,"
-//				"V,"
-//				"core_delay,"
-//				"isSelfFiring,"
-//
-//				);
-//		for(int i = 0; i < (NEURONS_IN_CORE * 2); i ++){
-//			if(i / NEURONS_IN_CORE == 0){
-//			fprintf(neuronConfigFile, "synapseConn-%i,",i%NEURONS_IN_CORE);
-//			}else{
-//			fprintf(neuronConfigFile, "synapse_type-%i,",i%NEURONS_IN_CORE);
-//			}
-//		}
-//
-//		UN( "isActive\n");
-//	}
-//	fflush(neuronConfigFile);
-//	//Loop through the elements of the neuron state, saving it's configuration to the file.
-//	MCRN("TN", s->isOutputNeuron,s->myCoreID,s->myLocalID);
-//
-//	fflush(neuronConfigFile);
-//	int mode = 0;
-//	int ss = 1;
-//	for (int i = 0; i < (NUM_NEURON_WEIGHTS * 2); i ++){
-//		if (i / NUM_NEURON_WEIGHTS == 0){
-//			mode ++;
-//		}
-//		switch (mode) {
-//			case 1:
-//				//sigma0, sigma1, sigma2, sigma3 (sign of inputs from axons of type s0,s1,s2,s3
-//				ss = SGN(s->synapticWeight[i % NUM_NEURON_WEIGHTS]);
-//				MCRN(ss);
-//				break;
-//
-//			case 2:
-//				MCRN(s->synapticWeight[i % NUM_NEURON_WEIGHTS]);
-//
-//				break;
-//			case 3:
-//				MCRN(s->weightSelection[i % NUM_NEURON_WEIGHTS]);
-//				break;
-//
-//		}
-//	}
-//
-//	MCRN((int)s->sigma_l,s->lambda, s->c,s->epsilon);
-//
-//	MCRN(s->posThreshold, s->negThreshold, s->thresholdPRNMask, s->resetMode);
-//	MCRN(s->kappa, s->sigmaVR, s->encodedResetVoltage,s->membranePotential);
-//
-//	MCRN((unsigned int) s->delayVal, (unsigned int)s->canGenerateSpontaniousSpikes);
-//
-//	fflush(neuronConfigFile);
-//
-//
-//	for (int i = 0; i < (NEURONS_IN_CORE * 2); i ++){
-//		if (i / NEURONS_IN_CORE == 0){
-//			MCRN(s->synapticConnectivity[i]);
-//		}else{
-//			MCRN(s->axonTypes[i % NEURONS_IN_CORE]);
-//		}
-//	}
-//
-//	fflush(neuronConfigFile);
-//	for(int i = 0; i < (NUM_NEURON_WEIGHTS); i++){
-//		MCRN(s->weightSelection[i]);
-//	}
-//	fflush(neuronConfigFile);
-//	UN("\n");
-//	fflush(neuronConfigFile);
-//
-//
-//
-//
-//}
 
 void closeTestFile(){
 	if(tddbFileOpen){

@@ -131,12 +131,12 @@ void synapse_final(synapseState *s, tw_lp *lp){
         
         if (s->msgSent != 0){
 			printf("%s ", shdr);
-			char* m = "Message Sent Val ->";
-            debugMsg(m, s->msgSent);
+			//char* m = "Message Sent Val ->";
+            //debugMsg(m, s->msgSent);
         }
     }
-	print( (char*) "SS Messages sent: ");
-	print(s->msgSent);
+	//print( (char*) "SS Messages sent: ");
+	//print(s->msgSent);
 	
 	
 

@@ -79,6 +79,15 @@ void TN_pre_run(tn_neuron_state *s, tw_lp *me);
  */
 void TN_final(tn_neuron_state *s, tw_lp *lp);
 
+/** TN_neuron_event_trace manages the event tracing for NeMo/ROSS instrumentation/viz.
+ *
+ * @param m
+ * @param lp
+ * @param buffer
+ * @param collect_flag
+ */
+void TN_neuron_event_trace(messageData *m, tw_lp *lp, char *buffer, int *collect_flag);
+
 /**
  * @brief	This takes a void pointer and returns this neuron's struct.
  * This is used for managing super synapse direct communication functionality.
