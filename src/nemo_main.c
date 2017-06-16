@@ -124,7 +124,7 @@ st_trace_type nemo_trace_types[] = {
                           (rbev_trace_f) NULL,
                           0,
                           (ev_trace_f) TN_neuron_event_trace,
-                          sizeof(id_type)
+                          sizeof(nevtdat)
                      },
              { 0 }
 

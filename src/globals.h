@@ -298,6 +298,13 @@ enum mapTestResults {
 //    TrueNorth = 0
 //} neuronTypes;
 
+typedef struct neuronEvtDat{
+    id_type localID;
+    tw_lpid globalID;
+    tw_stime eventTime;
+    volt_type neuronVoltage;
+}nevtdat;
+
 
 //Message Structure (Used Globally so placed here)
 typedef struct Ms{

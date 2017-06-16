@@ -1150,8 +1150,10 @@ void TN_reverse_event(tn_neuron_state* s, tw_bf* CV, messageData* m,
  * neurons! */
 void TN_commit(tn_neuron_state* s, tw_bf* cv, messageData* m, tw_lp* lp) {
 
-  if (SAVE_SPIKE_EVTS && cv->c0 && s->isOutputNeuron) {
-    saveNeuronFire(tw_now(lp), s->myCoreID, s->myLocalID, s->outputGID);
+  if (SAVE_SPIKE_EVTS && cv->c0 && s->isOutputNeuron){
+      if (! g_st_stats_enabled) {
+          saveNeuronFire(tw_now(lp), s->myCoreID, s->myLocalID, s->outputGID);
+      }
   }
     if (VALIDATION || SAVE_MEMBRANE_POTS) {  // If we are running model validation
         // or we are saving membrane
@@ -1205,12 +1207,6 @@ void TN_final(tn_neuron_state *s, tw_lp *lp) {
     }
 }
 
-struct neuronEvtDat{
-    id_type localID;
-    tw_lpid globalID;
-    tw_stime eventTime;
-    volt_type neuronVoltage;
-};
 
 /** TN_neuron_event_trace - Function that handles event traces for
  * data collection and instrumentation.
@@ -1221,7 +1217,7 @@ void TN_neuron_event_trace(messageData *m, tw_lp *lp, char *buffer, int *collect
 {
     id_type sender = (id_type) m->localID;
 
-    if(m->eventType == NEURON_HEARTBEAT || m->eventType == NEURON_OUT){
+    if(m->eventType == NEURON_HEARTBEAT || m->eventType == NEURON_OUT) {
         tn_neuron_state *n = tw_getstate(lp);
 
         struct neuronEvtDat data = {
@@ -1231,6 +1227,8 @@ void TN_neuron_event_trace(messageData *m, tw_lp *lp, char *buffer, int *collect
                 n->membranePotential
         };
         memcpy(buffer, &data, sizeof(data));
+    } else {
+        *collect_flag = 0;
     }
     //memcpy(buffer, &sender, sizeof(id_type));
 }
