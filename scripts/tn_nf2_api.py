@@ -130,6 +130,7 @@ class ConfigFile(object):
 					 f"neuron_weights = {nw} \n "\
 					 "neurons = { "
 		self.fhandle.write(self.header)
+		print("Config File Init..")
 
 	def openFile(self):
 		self.fhandle = open(self.destination,mode='w')

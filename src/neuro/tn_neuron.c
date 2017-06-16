@@ -437,6 +437,9 @@ void TNSendHeartbeat(tn_neuron_state* st, tw_stime time, void* lp) {
   messageData* data = (messageData*)tw_event_data(newEvent);
   data->localID = st->myLocalID;
   data->eventType = NEURON_HEARTBEAT;
+    data->neuronVoltage = st->membranePotential;
+    data->neuronLastActiveTime = st->lastActiveTime;
+    data->neuronLastLeakTime = st->lastLeakTime;
   tw_event_send(newEvent);
   if (st->heartbeatOut == false) {
     tw_error(TW_LOC,
@@ -558,7 +561,7 @@ void TNNumericLeakCalc(tn_neuron_state* st, tw_stime now) {
       getCurrentBigTick(now) - getCurrentBigTick(st->lastLeakTime);
   // then run the leak function until we've caught up:
   for (; numberOfBigTicksSinceLastLeak > 0; numberOfBigTicksSinceLastLeak--) {
-    uint64_t omega = st->sigma_l * (1 - st->epsilon) +
+    int64_t omega = st->sigma_l * (1 - st->epsilon) +
                      SGN(st->membranePotential) * st->sigma_l * st->epsilon;
 
     st->membranePotential =
@@ -1202,6 +1205,13 @@ void TN_final(tn_neuron_state *s, tw_lp *lp) {
     }
 }
 
+struct neuronEvtDat{
+    id_type localID;
+    tw_lpid globalID;
+    tw_stime eventTime;
+    volt_type neuronVoltage;
+};
+
 /** TN_neuron_event_trace - Function that handles event traces for
  * data collection and instrumentation.
  *
@@ -1210,7 +1220,19 @@ void TN_final(tn_neuron_state *s, tw_lp *lp) {
 void TN_neuron_event_trace(messageData *m, tw_lp *lp, char *buffer, int *collect_flag)
 {
     id_type sender = (id_type) m->localID;
-    memcpy(buffer, &sender, sizeof(id_type));
+
+    if(m->eventType == NEURON_HEARTBEAT || m->eventType == NEURON_OUT){
+        tn_neuron_state *n = tw_getstate(lp);
+
+        struct neuronEvtDat data = {
+                sender,
+                m->originGID,
+                m->msgCreationTime,
+                n->membranePotential
+        };
+        memcpy(buffer, &data, sizeof(data));
+    }
+    //memcpy(buffer, &sender, sizeof(id_type));
 }
 
 inline tn_neuron_state* TN_convert(void* lpstate) {
