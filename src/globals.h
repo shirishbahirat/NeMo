@@ -297,13 +297,13 @@ enum mapTestResults {
 //typedef enum NeuronTypes {
 //    TrueNorth = 0
 //} neuronTypes;
-
-typedef struct neuronEvtDat{
+struct neuronEvtDat{
     id_type localID;
     tw_lpid globalID;
     tw_stime eventTime;
     volt_type neuronVoltage;
-}nevtdat;
+}__attribute__((__packed__));
+typedef struct neuronEvtDat nevtdat;
 
 
 //Message Structure (Used Globally so placed here)
