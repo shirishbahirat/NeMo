@@ -1216,7 +1216,7 @@ void TN_final(tn_neuron_state *s, tw_lp *lp) {
 void TN_neuron_event_trace(messageData *m, tw_lp *lp, char *buffer, int *collect_flag)
 {
     id_type sender = (id_type) m->localID;
-
+	static int dbgsent = 0;
     if(m->eventType == NEURON_HEARTBEAT || m->eventType == NEURON_OUT) {
         tn_neuron_state *n = tw_getstate(lp);
 
@@ -1226,7 +1226,22 @@ void TN_neuron_event_trace(messageData *m, tw_lp *lp, char *buffer, int *collect
                 m->msgCreationTime,
                 n->membranePotential
         };
+		if(n->membranePotential < 0){
+			printf("\n\n -------------- mp: %i ", data.neuronVoltage);
+		}
+		if(n->membranePotential == -1879075130)
+			printf("FOUND DATA POINT \n\n\n\n\n");
+
         memcpy(buffer, &data, sizeof(data));
+		// Debug reader
+		if(!dbgsent){
+			FILE * testOut = fopen("singleEvent.bin","wb");
+			fwrite(&data,sizeof(struct neuronEvtDat), 1, testOut);
+			fclose(testOut);
+			dbgsent = 1;
+			printf("\n single line - \n %i \n %i \n %f \n %i \n ", data.localID, data.globalID,data.eventTime, data.neuronVoltage);
+		}
+
     } else {
         *collect_flag = 0;
     }
