@@ -1086,6 +1086,14 @@ void TN_init(tn_neuron_state* s, tw_lp* lp) {
 		
 		
 	}
+
+	//Some asserts for sanity:
+
+	//Neurons in NeMo2 should be configured s.t:
+	// Neurons in a core must have a GID value that satisfies:
+	// nid >= (core_id * (axons_in_core + 1))
+	// So on core 0, neurons are valid from 256 <-> 512
+	// Core 1 would be valid from 769 <-> 1025
 	
 
 

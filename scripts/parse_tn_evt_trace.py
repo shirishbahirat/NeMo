@@ -24,7 +24,7 @@ def readFile(file,save):
 	tps = e + ( predefined_types + "," + "u2,u8,f8,i4" ).replace(",","," + e)
 	tps = predefined_types
 	print(tps)
-	cdt = np.dtype(tps,align=True )
+	cdt = np.dtype(tps,align=False )
 	fullData = np.fromfile(file, dtype=cdt)
 	assert(isinstance(fullData, np.ndarray))
 
