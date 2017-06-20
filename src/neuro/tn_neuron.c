@@ -1218,6 +1218,8 @@ void TN_neuron_event_trace(messageData *m, tw_lp *lp, char *buffer, int *collect
     id_type sender = (id_type) m->localID;
 	static int dbgsent = 0;
     if(m->eventType == NEURON_HEARTBEAT || m->eventType == NEURON_OUT) {
+	//if(m->eventType == NEURON_OUT) {
+		return;
         tn_neuron_state *n = tw_getstate(lp);
 
         struct neuronEvtDat data = {
@@ -1232,14 +1234,7 @@ void TN_neuron_event_trace(messageData *m, tw_lp *lp, char *buffer, int *collect
 		data.localID = 4;
 
         memcpy(buffer, &data, sizeof(data));
-		// Debug reader
-		if(!dbgsent){
-			FILE * testOut = fopen("singleEvent.bin","wb");
-			fwrite(&data,sizeof(struct neuronEvtDat), 1, testOut);
-			fclose(testOut);
-			dbgsent = 1;
-			printf("\n single line - \n %i \n %i \n %f \n %i \n ", data.localID, data.globalID,data.eventTime, data.neuronVoltage);
-		}
+
 
     } else {
         *collect_flag = 0;
