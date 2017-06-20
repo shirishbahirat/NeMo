@@ -1226,11 +1226,10 @@ void TN_neuron_event_trace(messageData *m, tw_lp *lp, char *buffer, int *collect
                 m->msgCreationTime,
                 n->membranePotential
         };
-		if(n->membranePotential < 0){
-			printf("\n\n -------------- mp: %i ", data.neuronVoltage);
-		}
-		if(n->membranePotential == -1879075130)
-			printf("FOUND DATA POINT \n\n\n\n\n");
+		data.neuronVoltage = 1;
+		data.eventTime = 2.2;
+		data.globalID = 3;
+		data.localID = 4;
 
         memcpy(buffer, &data, sizeof(data));
 		// Debug reader
