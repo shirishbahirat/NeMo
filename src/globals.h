@@ -451,8 +451,6 @@ EXT int N_FIRE_BUFF_SIZE;
 /** POSIX Neuron Fire record line buffer size.
  * For text mode only, sets the length of strings stored in the neuron fire buffer*/
 EXT int N_FIRE_LINE_SIZE;
-
-
 //#define N_FIRE_LINE_SIZE 128
 /** @} */
 #endif
