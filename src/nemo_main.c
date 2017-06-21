@@ -117,7 +117,7 @@ tw_lptype model_lps[] = {
 
 
 /** Stats gathering */
-st_trace_type nemo_trace_types[] = {
+st_model_types nemo_trace_types[] = {
              { 0 },
              { 0 },
              {
@@ -238,7 +238,11 @@ void init_nemo() {
 	g_tw_lp_types = model_lps;
 	g_tw_lp_typemap = lpTypeMapper;
 	// Viz settings:
-	g_st_trace_types = nemo_trace_types;
+
+	//g_st_trace_types = nemo_trace_types;
+	g_st_model_types = nemo_trace_types;
+
+
 	/// EVENTS PER PE SETTING
 	g_tw_events_per_pe = NEURONS_IN_CORE * AXONS_IN_CORE; // magic number
 

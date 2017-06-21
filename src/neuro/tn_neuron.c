@@ -1227,7 +1227,7 @@ void TN_neuron_event_trace(messageData *m, tw_lp *lp, char *buffer, int *collect
 	static int dbgsent = 0;
     if(m->eventType == NEURON_HEARTBEAT || m->eventType == NEURON_OUT) {
 	//if(m->eventType == NEURON_OUT) {
-		return;
+
         tn_neuron_state *n = tw_getstate(lp);
 
         struct neuronEvtDat data = {

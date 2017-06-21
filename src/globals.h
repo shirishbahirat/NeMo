@@ -302,7 +302,7 @@ struct neuronEvtDat{
     tw_lpid globalID;
     tw_stime eventTime;
     volt_type neuronVoltage;
-};//__attribute__((packed__));
+}__attribute__((__packed__));
 typedef struct neuronEvtDat nevtdat;
 
 
