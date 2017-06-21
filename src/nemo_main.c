@@ -124,7 +124,7 @@ st_model_types nemo_trace_types[] = {
                           (rbev_trace_f) NULL,
                           0,
                           (ev_trace_f) TN_neuron_event_trace,
-                          sizeof(nevtdat)
+                          sizeof(struct neuronEvtDat)
                      },
              { 0 }
 
@@ -258,11 +258,14 @@ void init_nemo() {
  *
 
  */
-
+#define psize(TP)  printf( #TP " :\t: %i\n", sizeof( TP ) ) ;
 int main(int argc, char *argv[]) {
 
 	tw_opt_add(app_opt);
 	tw_init(&argc, &argv);
+
+
+
 
 	// call nemo init
 	init_nemo();
