@@ -299,9 +299,10 @@ enum mapTestResults {
 //} neuronTypes;
 struct neuronEvtDat{
     id_type localID;
-    tw_lpid globalID;
+    tw_lpid coreID;
     tw_stime eventTime;
     volt_type neuronVoltage;
+	u_int8_t eventType;
 }__attribute__((__packed__));
 typedef struct neuronEvtDat nevtdat;
 

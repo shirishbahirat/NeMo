@@ -1230,18 +1230,26 @@ void TN_neuron_event_trace(messageData *m, tw_lp *lp, char *buffer, int *collect
 
         tn_neuron_state *n = tw_getstate(lp);
 
-        struct neuronEvtDat data = {
-                sender,
-                m->originGID,
-                m->msgCreationTime,
-                n->membranePotential
-        };
-		data.neuronVoltage = 1;
-		data.eventTime = 2.2;
-		data.globalID = 3;
-		data.localID = 4;
+//        struct neuronEvtDat data = {
+//                n->myLocalID,
+//                n->myCoreID,
+//                m->msgCreationTime,
+//                n->membranePotential
+//        };
 
-        memcpy(buffer, &data, sizeof(data));
+		nevtdat * data = tw_calloc(TW_LOC,"N_STAT",sizeof(data),1);
+		data->localID = n->myLocalID;
+		data->coreID  = n->myCoreID;
+		data->eventTime = getCurrentBigTick(tw_now(lp));
+		data->neuronVoltage = n->membranePotential;
+		if(m->eventType == NEURON_HEARTBEAT)
+			data->eventType = 1;
+		else
+			data->eventType = 2;
+
+//        memcpy(buffer, &data, sizeof(data));
+		memmove(buffer,data,sizeof(nevtdat));
+//		memcpy(buffer, data, sizeof(nevtdat));
 
 
     } else {
