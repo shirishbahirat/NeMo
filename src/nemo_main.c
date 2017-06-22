@@ -95,7 +95,15 @@ const tw_optdef app_opt[] = {
 		TWOPT_END()
 
 };
+/*************************TEMPORARY HOLDING GROUND FOR SYNAPSE AND AXON EVENT TREACES
+ * MOVE TO PROPER HEADER/SORCE FILES ! @TODO */
 
+void axon_event_trace(messageData *m, tw_lp *lp, char *buffer, int *collect_flag){
+	*collect_flag = 0;
+}
+void synapse_event_trace(messageData *m, tw_lp *lp, char *buffer, int *collect_flag){
+	*collect_flag = 0;
+}
 /**
  * model_lps - contains the LP type defs for NeMo
  */
@@ -118,8 +126,16 @@ tw_lptype model_lps[] = {
 
 /** Stats gathering */
 st_model_types nemo_trace_types[] = {
-             { 0 },
-             { 0 },
+             { (rbev_trace_f) NULL,
+			 	0,
+					 (ev_trace_f) axon_event_trace,
+					 sizeof(struct neuronEvtDat)
+			 },
+             { (rbev_trace_f) NULL,
+			 0,
+					 (ev_trace_f) synapse_event_trace,
+					 sizeof(struct neuronEvtDat)
+			 },
              {
                           (rbev_trace_f) NULL,
                           0,
