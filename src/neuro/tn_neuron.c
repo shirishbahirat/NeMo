@@ -1237,7 +1237,7 @@ void TN_neuron_event_trace(messageData *m, tw_lp *lp, char *buffer, int *collect
 //                n->membranePotential
 //        };
 
-		nevtdat * data = tw_calloc(TW_LOC,"N_STAT",sizeof(data),1);
+		nevtdat * data = tw_calloc(TW_LOC,"N_STAT",sizeof(nevtdat),1);
 		data->localID = n->myLocalID;
 		data->coreID  = n->myCoreID;
 		data->eventTime = getCurrentBigTick(tw_now(lp));
