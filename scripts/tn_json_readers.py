@@ -4,7 +4,7 @@ import json
 import multiprocessing as mp
 from collections import OrderedDict
 from concurrent.futures import as_completed
-
+from joblib import Parallel, delayed
 import jsoncomment.package.comments as comments
 import numpy as np
 from tqdm import tqdm
@@ -391,17 +391,21 @@ def createNeMoCFGFromJson(filename, modelFN='nemo_model.nfg1'):
 			'total': len(f),
 			#'unit': 'nap',
 			'unit_scale': True,
-			'leave': True
+			'leave': False,
+			'ncols':80,
+			'ascii':True
 		}
 		print("Running JSON neuron conversion...")
 
 		for dti in tqdm(as_completed(f), **kwargs):
 			data.append(dti.result())
-		print("Combine JSON")
-		for n in tqdm(data):
-			for v in tqdm(n, leave=False):
+		print("Combine converted neurons")
+		#Parallel(n_jobs=2)(delayed([cfgFile.addNeuron(v) for v in n])(n) for n in data)
+		for n in tqdm(data,ncols=80, ascii=True, desc='Combining Into NeMo Text'):
+			for v in tqdm(n,leave=False, ascii=True,ncols=30, desc='SubNeuron'):
 				cfgFile.addNeuron(v)
 		#[[cfgFile.addNeuron(v) for v in n] for n in data]
+
 
 	# cfgFile.neuron_text = cfgFile.neuron_text + data
 	return cfgFile
