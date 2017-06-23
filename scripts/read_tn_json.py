@@ -11,8 +11,8 @@ class nOpts:
 @click.command()
 @click.option('--modelname', default='nemo_', help="The file prefix used for this model/spike file parse run")
 #@click.option('--cores', default=1024, help="The number of NS cores to simulate NOT IMPLEMENTED")
-@click.option('--jmodel', help="The TN JSON file to read")
-@click.option('--jspike', help="The TN JSON spike file to read")
+@click.option('--jmodel', default='/Users/mplagge/development/NeMo/scripts/sobel/sobelTiles.json', help="The TN JSON file to read")
+@click.option('--jspike', default='/Users/mplagge/development/NeMo/scripts/sobel/sobelTiles_inputSpikes.sfti', help="The TN JSON spike file to read")
 def cli(modelname,jmodel,jspike):
 	ctx  = nOpts(modelname)
 

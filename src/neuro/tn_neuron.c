@@ -1250,6 +1250,7 @@ void TN_neuron_event_trace(messageData *m, tw_lp *lp, char *buffer, int *collect
 //        memcpy(buffer, &data, sizeof(data));
 		memmove(buffer,data,sizeof(nevtdat));
 //		memcpy(buffer, data, sizeof(nevtdat));
+		free(data);
 
 
     } else {
