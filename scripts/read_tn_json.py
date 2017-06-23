@@ -30,11 +30,11 @@ def readJSON(ctx):
 	click.echo("Starting JSON read - will take some time.")
 	df = createNeMoCFGFromJson(modelFile,outPrefix+"_model")
 	df.closeFile()
-	with open(df.destination, 'r') as f:
-		fdat = f.readline()
-
-	with open(df.destination, 'w') as f:
-		f.writelines(fdat[2:])
+	# with open(df.destination, 'r') as f:
+	# 	fdat = f.readline()
+	#
+	# with open(df.destination, 'w') as f:
+	# 	f.writelines(fdat[2:])
 
 	readAndSaveSpikeFile(filename=spikeFile, saveFile=outPrefix+"_spike.csv")
 
