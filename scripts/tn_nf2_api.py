@@ -143,6 +143,8 @@ class ConfigFile(object):
 	def addNeuron(self,neuron):
 		self.fileDat.append(f"{neuron.toNeMoStr()}")
 
+	def addNeuronStr(self, neuronstr):
+		self.fileDat.append(neuronstr)
 
 
 
@@ -155,7 +157,7 @@ class Spike(object):
 
 	def __init__(self, time, destCore, destAxon):
 		self.time = time
-		self.destcore = destCore
+		self.destCore = destCore
 		self.destAxon = destAxon
 
 	def toCSV(self):

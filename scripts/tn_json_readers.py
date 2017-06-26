@@ -401,15 +401,31 @@ def createNeMoCFGFromJson(filename, modelFN='nemo_model.nfg1'):
 			data.append(dti.result())
 		print("Combine converted neurons")
 		#Parallel(n_jobs=2)(delayed([cfgFile.addNeuron(v) for v in n])(n) for n in data)
-		for n in tqdm(data,ncols=80, ascii=True, desc='Combining Into NeMo Text'):
-			for v in tqdm(n,leave=False, ascii=True,ncols=30, desc='SubNeuron'):
-				cfgFile.addNeuron(v)
+		ft = []
+
+		for n in data:
+			#for v in tqdm(n,leave=False, ascii=True,ncols=30, desc='SubNeuron'):
+			ft.append(e.submit(ntostr,n))
+		for dti in tqdm(as_completed(ft),ncols=80, ascii=True, desc='Combining Into NeMo Text'):
+			#for dti in tqdm(as_completed(ft), ncols=4, leave=False):
+			v = dti.result()
+			for txt in v:
+				cfgFile.addNeuronStr(txt)
+
+
+			# for v in n:
+			# 	cfgFile.addNeuron(v)
 		#[[cfgFile.addNeuron(v) for v in n] for n in data]
 
 
 	# cfgFile.neuron_text = cfgFile.neuron_text + data
 	return cfgFile
 
+def ntostr(neuronList):
+	patterns = []
+	for v in neuronList:
+		patterns.append(v.toNeMoStr())
+	return patterns
 
 def neuronCSVFut(cores, crossbars, nc, neuronTemplates):
 	"""

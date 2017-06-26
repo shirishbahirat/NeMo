@@ -11,8 +11,8 @@ class nOpts:
 @click.command()
 @click.option('--modelname', default='nemo_', help="The file prefix used for this model/spike file parse run")
 #@click.option('--cores', default=1024, help="The number of NS cores to simulate NOT IMPLEMENTED")
-@click.option('--jmodel', default='/Users/mplagge/development/NeMo/scripts/sobel/sobelTiles.json', help="The TN JSON file to read")
-@click.option('--jspike', default='/Users/mplagge/development/NeMo/scripts/sobel/sobelTiles_inputSpikes.sfti', help="The TN JSON spike file to read")
+@click.option('--jmodel', default='/home/plaggm/superneuro/NeMo/scripts/sobel/sobelTiles.json', help="The TN JSON file to read")
+@click.option('--jspike', default='/home/plaggm/superneuro/NeMo/scripts/sobel/sobelTiles_inputSpikes.sfti', help="The TN JSON spike file to read")
 def cli(modelname,jmodel,jspike):
 	ctx  = nOpts(modelname)
 
@@ -27,6 +27,10 @@ def readJSON(ctx):
 	modelFile = ctx.jmodel
 	spikeFile = ctx.jspike
 
+	click.echo("Converting Spike File...")
+	readAndSaveSpikeFile(filename=spikeFile, saveFile=outPrefix+"_spike.csv")
+	click.echo("Complete...")
+
 	click.echo("Starting JSON read - will take some time.")
 	df = createNeMoCFGFromJson(modelFile,outPrefix+"_model")
 	df.closeFile()
@@ -36,7 +40,7 @@ def readJSON(ctx):
 	# with open(df.destination, 'w') as f:
 	# 	f.writelines(fdat[2:])
 
-	readAndSaveSpikeFile(filename=spikeFile, saveFile=outPrefix+"_spike.csv")
+
 
 
 

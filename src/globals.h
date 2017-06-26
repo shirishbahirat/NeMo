@@ -361,11 +361,12 @@ typedef struct CsvNeuron{
  * SpikeElem / spikeElem is a struct that holds the raw spike data
  * from a CSV file. The data is stored in a simclist list. One spike
  * is stored in each spikeElem.
+ * @todo:Change 128 bit integers to 64 bit after debugging is complete.
  */
 typedef struct SpikeElem{
-    long scheduledTime;
-    long destCore;
-    long destAxon;
+    tw_stime scheduledTime;
+    __int128_t destCore;
+    __int128_t destAxon;
 }spikeElem;
 
 /**
