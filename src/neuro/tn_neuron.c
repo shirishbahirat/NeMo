@@ -252,6 +252,10 @@ void TNFire(tn_neuron_state* st, void* l) {
 
         data->eventType = NEURON_OUT;
         data->localID = st->myLocalID;
+        data->neuronVoltage = st->membranePotential;
+        data->msgCreationTime = tw_now(lp);
+        data->originGID = lp->gid;
+
         tw_event_send(newEvent);
     }
   st->firedLast = true;
@@ -260,6 +264,9 @@ bool TNReceiveMessage(tn_neuron_state* st, messageData* m, tw_lp* lp,
                       tw_bf* bf) {
   /** @todo Replace these state saving values with reverse computation. */
   m->neuronVoltage = st->membranePotential;
+  if (!st->isActiveNeuron){
+      return false;
+  }
   m->neuronLastLeakTime = st->lastLeakTime;
   m->neuronDrawnRandom = st->drawnRandomNumber;
   // m->neuronFireCount = st->fireCount;
@@ -674,7 +681,7 @@ void tn_create_neuron_encoded_rv(
                    kappa, n, signalDelay, destGlobalID, destAxonID);
   n->sigmaVR = sigmaVR;
   n->encodedResetVoltage = VR;
-  n->resetVoltage = (n->sigmaVR * (pow(2, n->encodedResetVoltage) - 1));
+  n->resetVoltage = (n->sigmaVR * ((int)pow(2, n->encodedResetVoltage) - 1));
 }
 /**
  * @brief      Creates a simple neuron for a identity matrix benchmark.
@@ -940,9 +947,9 @@ int safeGetArr(int direct,  char * lutName, char * dirName, long vars[],
 void TNPopulateFromFile(tn_neuron_state *st, tw_lp* lp){
     int extraParamCache = 32;
 	// Set up neuron - first non array params:
-	long outputGID;
-	long outputCore;
-	long outputLID;
+	tw_lpid outputGID;
+	id_type outputCore;
+	id_type outputLID;
 	id_type core = getCoreFromGID(lp->gid);
 	id_type nid = getNeuronLocalFromGID(lp->gid);
 	
@@ -970,7 +977,8 @@ void TNPopulateFromFile(tn_neuron_state *st, tw_lp* lp){
 	bool epsilon = 				LGT("epsilon");
 	bool c = 					LGT("c");
 	bool kappa = 				LGT("kappa");
-	bool isActiveNeuron = 		LGT("isActiveNeuron");
+	//bool isActiveNeuron = 		LGT("isActiveNeuron");
+    bool isActiveNeuron = true;
 
 	volt_type alpha = lGetAndPushParam("alpha", 0, NULL);
 	volt_type beta = lGetAndPushParam("beta", 0, NULL);
@@ -1237,20 +1245,31 @@ void TN_neuron_event_trace(messageData *m, tw_lp *lp, char *buffer, int *collect
 //                n->membranePotential
 //        };
 
-		nevtdat * data = tw_calloc(TW_LOC,"N_STAT",sizeof(nevtdat),1);
-		data->localID = n->myLocalID;
-		data->coreID  = n->myCoreID;
-		data->eventTime = getCurrentBigTick(tw_now(lp));
-		data->neuronVoltage = n->membranePotential;
+//		nevtdat * data = tw_calloc(TW_LOC,"N_STAT",sizeof(nevtdat),1);
+		nevtdat data;		
+		
+		data.localID = n->myLocalID;
+		data.coreID  = n->myCoreID;
+		data.eventTime = getCurrentBigTick(tw_now(lp));
+		data.neuronVoltage = n->membranePotential;
 		if(m->eventType == NEURON_HEARTBEAT)
-			data->eventType = 1;
+			data.eventType = 1;
 		else
-			data->eventType = 2;
-
+			data.eventType = 2;
+//
+//		data->localID = n->myLocalID;
+//		data->coreID  = n->myCoreID;
+//		data->eventTime = getCurrentBigTick(tw_now(lp));
+//		data->neuronVoltage = n->membranePotential;
+//		if(m->eventType == NEURON_HEARTBEAT)
+//			data->eventType = 1;
+//		else
+//			data->eventType = 2;
+//
 //        memcpy(buffer, &data, sizeof(data));
-		memmove(buffer,data,sizeof(nevtdat));
+		memmove(buffer,&data,sizeof(nevtdat));
 //		memcpy(buffer, data, sizeof(nevtdat));
-		free(data);
+		//free(data);
 
 
     } else {

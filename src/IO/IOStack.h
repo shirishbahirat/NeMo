@@ -172,10 +172,11 @@ void initModelInput(unsigned long maxNeurons);
 char* luT( char * nemoName);
 
 
+void saveNetworkStructure();
 
 /**
  * closeModelInput closes the LUA parser after the model has been loaded.
- * Do this once the neurons have be initialized.
+ * Do this once the neurons have been initialized.
  */
 void closeModelInput();
 

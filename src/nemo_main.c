@@ -21,7 +21,7 @@ bool IS_RAND_NETWORK = true;
 bool BULK_MODE = false;
 bool DEBUG_MODE = false;
 bool SAVE_MEMBRANE_POTS = false;
-bool SAVE_SPIKE_EVTS = true;
+bool SAVE_SPIKE_EVTS = false;
 bool SAVE_NETWORK_STRUCTURE = true;
 bool PHAS_VAL = false;
 bool TONIC_SPK_VAL = false;
@@ -85,25 +85,38 @@ const tw_optdef app_opt[] = {
 		TWOPT_FLAG("network", SAVE_NETWORK_STRUCTURE, "Save neuron output axon IDs "
 				"on creation - Creates a map "
 				"of the neural network."),
-		TWOPT_FLAG(
-				"svm", SAVE_MEMBRANE_POTS,
-				"Save neuron membrane potential "
-						"values (saves membrane potential per-tick if neuron was active.)"),
-		TWOPT_FLAG("svs", SAVE_SPIKE_EVTS,
-				   "Save neuron spike event times and info"),
+//		TWOPT_FLAG(
+//				"svm", SAVE_MEMBRANE_POTS,
+//				"Save neuron membrane potential "
+//						"values (saves membrane potential per-tick if neuron was active.)"),
+//		TWOPT_FLAG("svs", SAVE_SPIKE_EVTS,
+//				   "Save neuron spike event times and info"),
 
 		TWOPT_END()
 
 };
-/*************************TEMPORARY HOLDING GROUND FOR SYNAPSE AND AXON EVENT TREACES
- * MOVE TO PROPER HEADER/SORCE FILES ! @TODO */
+/*************************TEMPORARY HOLDING GROUND FOR SYNAPSE AND AXON EVENT TRACES
+ * MOVE TO PROPER HEADER/SOURCE FILES ! @TODO */
 
 void axon_event_trace(messageData *m, tw_lp *lp, char *buffer, int *collect_flag){
-	*collect_flag = 0;
+	if (m->eventType == NEURON_OUT){
+        struct neuronEvtDat dat;
+        dat.eventType = 2;
+        dat.localID = m->localID;
+        dat.coreID = getCoreFromGID(m->originGID);
+        dat.eventTime = m->msgCreationTime;
+        dat.neuronVoltage = m->neuronVoltage;
+
+        memcpy(buffer,&dat, sizeof(nevtdat));
+         }
+    else{
+        *collect_flag = 0;
+    }
 }
 void synapse_event_trace(messageData *m, tw_lp *lp, char *buffer, int *collect_flag){
 	*collect_flag = 0;
 }
+///////////////////////////////////////////////////////////////////////////////////////
 /**
  * model_lps - contains the LP type defs for NeMo
  */
@@ -126,23 +139,23 @@ tw_lptype model_lps[] = {
 
 /** Stats gathering */
 st_model_types nemo_trace_types[] = {
-             { (rbev_trace_f) NULL,
-			 	0,
-					 (ev_trace_f) axon_event_trace,
-					 sizeof(struct neuronEvtDat)
-			 },
-             { (rbev_trace_f) NULL,
-			 0,
-					 (ev_trace_f) synapse_event_trace,
-					 sizeof(struct neuronEvtDat)
-			 },
-             {
-                          (rbev_trace_f) NULL,
-                          0,
-                          (ev_trace_f) TN_neuron_event_trace,
-                          sizeof(struct neuronEvtDat)
-                     },
-             { 0 }
+        {       (rbev_trace_f) NULL,
+                0,
+                (ev_trace_f) axon_event_trace,
+                sizeof(struct neuronEvtDat)
+        },
+        {       (rbev_trace_f) NULL,
+                0,
+                (ev_trace_f) synapse_event_trace,
+                sizeof(struct neuronEvtDat)
+        },
+        {
+                (rbev_trace_f) NULL,
+                0,
+                (ev_trace_f) TN_neuron_event_trace,
+                sizeof(struct neuronEvtDat)
+        },
+        {0}
 
 };
 
@@ -216,7 +229,7 @@ void init_nemo() {
 	FILE_OUT = SAVE_SPIKE_EVTS || SAVE_NETWORK_STRUCTURE || SAVE_MEMBRANE_POTS ||
 			   VALIDATION;
 
-	if (FILE_OUT) {
+	if (FILE_OUT && !g_st_stats_enabled) {
 		// Init file output handles
 		initOutFiles();
 		openOutputFiles("network_def.csv");
@@ -226,6 +239,14 @@ void init_nemo() {
 			printf("Output Files Init.\n");
 		}
 	}
+    //We should save the network def. configuration, in a CSV,
+    //pretty much every time - so that we can compare what the input files are telling
+    //vs what we are getting.
+
+    openOutputFiles("nemo_network_config.csv");
+
+
+
 
 	if (FILE_IN) {
 		// Init File Input Handles
@@ -294,10 +315,14 @@ int main(int argc, char *argv[]) {
 	}
 	tw_run();
 	if (SAVE_NETWORK_STRUCTURE) {
+        printf("Saving Network Configuration\n");
 		closeOutputFiles();
 	}
-	if (FILE_OUT) {
-		closeFiles();
-	}
+//	if (FILE_OUT) {
+//        printf("Closing output files \n");
+//		closeFiles();
+//	}
+// printf("Saving Network Config 2\n" );
+//    saveNetworkStructure();
 	tw_end();
 }

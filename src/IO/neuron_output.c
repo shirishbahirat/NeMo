@@ -26,14 +26,14 @@ void openOutputFiles(char * outputFileName){
 //    strcat(ncfgfn,".bin");
 
     outNetworkCfgFile = fopen(outputFileName,"wb");
-    fprintf(outNetworkCfgFile, "Core,NeuronID,DestCore,DestAxon\n");
+    fprintf(outNetworkCfgFile, "Core,NeuronID,DestCore,DestAxon,isActive,isOutput,posThreshold,negThreshold\n");
 //    outNeuronCfgFile = fopen(ncfgfn, "wb");
 
 }
 void closeOutputFiles(){
     while(list_size(&networkStructureList) > 0){
         char * line = list_get_at(&networkStructureList, 0);
-        fprintf(outNetworkCfgFile, line);
+        fprintf(outNetworkCfgFile, "%s", line);
         list_delete_at(&networkStructureList, 0);
     }
 
@@ -54,7 +54,12 @@ int neuronConnToSCSV(tn_neuron_state *n, char *state){
     id_type destAxon = getAxonLocal(n->outputGID);
     id_type core = n->myCoreID;
     id_type local = n->myLocalID;
-    return sprintf(state,"%li,%li,%i,%i\n", core,local,destCore, destAxon);
+    bool isActive = n->isActiveNeuron;
+    bool isOut = n->isOutputNeuron;
+    volt_type  posT = n->posThreshold;
+    volt_type negT = n->negThreshold;
+
+    return sprintf(state,"%li,%li,%i,%i,%i,%i,%"PRIi32",%"PRIi32"\n", core,local,destCore, destAxon,isActive,isOut,posT,negT);
 }
 void saveIndNeuron(void *ns) {
     tn_neuron_state *n = (tn_neuron_state *) ns;
@@ -64,7 +69,7 @@ void saveIndNeuron(void *ns) {
     if (list_size(&networkStructureList) > maxNetworkListSize) {
         while (list_size(&networkStructureList) > 0) {
             char *line = list_get_at(&networkStructureList, 0);
-            fprintf(outNetworkCfgFile, line);
+            fprintf(outNetworkCfgFile, "%s",line);
             list_delete_at(&networkStructureList, 0);
 
         }
@@ -93,7 +98,7 @@ void saveNetworkStructure(){
         if (list_size(&networkStructureList) > maxNetworkListSize){
             while(list_size(&networkStructureList) > 0){
                 char * line = list_get_at(&networkStructureList, 0);
-                fprintf(outNetworkCfgFile, line);
+                fprintf(outNetworkCfgFile, "%s", line);
                 list_delete_at(&networkStructureList, 0);
 
             }
