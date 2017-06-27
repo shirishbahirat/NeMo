@@ -321,7 +321,8 @@ bool TNReceiveMessage(tn_neuron_state* st, messageData* m, tw_lp* lp,
       bf->c0 = willFire;
 
       if (willFire) {
-        TNFire(st, lp);
+		  if (! st->isOutputNeuron)
+			  TNFire(st, lp);
         // st->fireCount++;
           bf->c0 = 1;
       }
