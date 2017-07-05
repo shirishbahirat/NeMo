@@ -229,7 +229,7 @@ void init_nemo() {
 	FILE_OUT = SAVE_SPIKE_EVTS || SAVE_NETWORK_STRUCTURE || SAVE_MEMBRANE_POTS ||
 			   VALIDATION;
 
-	if (FILE_OUT && !g_st_stats_enabled) {
+	if (FILE_OUT && !g_st_model_stats) {
 		// Init file output handles
 		initOutFiles();
 		openOutputFiles("network_def.csv");

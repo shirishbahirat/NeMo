@@ -1168,7 +1168,7 @@ void TN_reverse_event(tn_neuron_state* s, tw_bf* CV, messageData* m,
 void TN_commit(tn_neuron_state* s, tw_bf* cv, messageData* m, tw_lp* lp) {
 
   if (SAVE_SPIKE_EVTS && cv->c0 && s->isOutputNeuron){
-      if (! g_st_stats_enabled) {
+      if (! g_st_model_stats) {
           saveNeuronFire(tw_now(lp), s->myCoreID, s->myLocalID, s->outputGID);
       }
   }
