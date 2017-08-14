@@ -47,7 +47,7 @@ char *NETWORK_CFG_FN = "nemo_model.nfg1";
  *
  */
 bool FILE_OUT = false;
-bool FILE_IN = true;
+bool FILE_IN = false;
 
 /**
  * outFile - basic output file handler.

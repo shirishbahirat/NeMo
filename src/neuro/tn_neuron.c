@@ -1046,7 +1046,7 @@ void TNPopulateFromFile(tn_neuron_state *st, tw_lp* lp){
 
  
  */
-void TNCreateFromFile(tn_neuron_state* s, tw_lp* lp){
+void TN_create_from_file(tn_neuron_state *s, tw_lp *lp){
 
 	
 	//first, get our Neuron IDs:
@@ -1087,11 +1087,11 @@ void TN_init(tn_neuron_state* s, tw_lp* lp) {
     announced = true;
   }
 	if(FILE_IN){
-		TNCreateFromFile(s, lp);
+        TN_create_from_file(s, lp);
 
 	}else{
-		//TN_create_simple_neuron(s, lp);
-		s->isActiveNeuron = false;
+		TN_create_simple_neuron(s, lp);
+		//s->isActiveNeuron = false;
 		
 		
 	}
@@ -1175,6 +1175,8 @@ void TN_commit(tn_neuron_state* s, tw_bf* cv, messageData* m, tw_lp* lp) {
     if (VALIDATION || SAVE_MEMBRANE_POTS) {  // If we are running model validation
         // or we are saving membrane
         // potentials
+        saveNeuronFire(tw_now(lp), s->myCoreID, s->myLocalID, s->outputGID);
+
 
         //saveNeruonState(s->myLocalID, s->myCoreID, s->membranePotential, tw_now(lp));
     }
