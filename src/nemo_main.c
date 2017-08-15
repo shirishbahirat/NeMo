@@ -85,12 +85,12 @@ const tw_optdef app_opt[] = {
 		TWOPT_FLAG("network", SAVE_NETWORK_STRUCTURE, "Save neuron output axon IDs "
 				"on creation - Creates a map "
 				"of the neural network."),
-//		TWOPT_FLAG(
-//				"svm", SAVE_MEMBRANE_POTS,
-//				"Save neuron membrane potential "
-//						"values (saves membrane potential per-tick if neuron was active.)"),
-//		TWOPT_FLAG("svs", SAVE_SPIKE_EVTS,
-//				   "Save neuron spike event times and info"),
+		TWOPT_FLAG(
+				"svm", SAVE_MEMBRANE_POTS,
+				"Save neuron membrane potential "
+						"values (saves membrane potential per-tick if neuron was active.)"),
+TWOPT_FLAG("svs", SAVE_SPIKE_EVTS,
+"Save neuron spike event times and info"),
 
 		TWOPT_END()
 
