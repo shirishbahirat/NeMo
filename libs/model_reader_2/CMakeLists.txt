@@ -3,7 +3,7 @@ project(TN_JSON_2 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 
-set(model_lib_src src/tn_json_parser.cpp include/tn_json_parser.hh)
+set(model_lib_src src/tn_json_parser.cpp include/tn_json_parser.hh src/utils.hh src/utils.cpp)
 set(model_bin_src main.cpp)
 
 add_library(TN_json_lib ${model_lib_src})
