@@ -55,6 +55,8 @@ set (LuaD "${CMAKE_CURRENT_SOURCE_DIR}/lua")
 set (SQLD "${CMAKE_CURRENT_SOURCE_DIR}/sqlite/")
 set (simcld "${CMAKE_CURRENT_SOURCE_DIR}/src/lib/simclist")
 set(MLD_D "${CMAKE_CURRENT_SOURCE_DIR}/libs/model_reader")
+set(MLD_RDR2 "${CMAKE_CURRENT_SOURCE_DIR}/libs/model_reader_2")
+
 #cmake_policy(SET CMP0012 OLD)
 # LUA Options
 #SET(USE_LUA_JIT FALSE BOOL)
@@ -79,6 +81,7 @@ endif()
 
 ADD_SUBDIRECTORY(${ND})
 add_subdirectory(${MLD_D})
+add_subdirectory(${MLD_RDR2})
 #find_package(MPI REQUIRED)
 
 
@@ -95,6 +98,8 @@ set_target_properties( NeMo
 )
 
 
+
+
 #files for running IO:
 #
 
@@ -102,6 +107,7 @@ set_target_properties( NeMo
 configure_file("demo.csv" "${CMAKE_BINARY_DIR}/bin/demo.csv" COPYONLY)
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/IO/model_read.lua ${CMAKE_CURRENT_BINARY_DIR}/bin/model_read.lua COPYONLY)
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/IO/tn_types.lua ${CMAKE_CURRENT_BINARY_DIR}/bin/tn_types.lua COPYONLY)
+
 
 set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} -L${CMAKE_CURRENT_BINARY_DIR}/sqlite)
 set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -L${CMAKE_BINARY_DIR}/sqlite")
